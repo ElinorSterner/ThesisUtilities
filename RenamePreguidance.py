@@ -28,6 +28,22 @@ for file in os.listdir(input_fasta):
 			
 			if taxa in cell_dict:
 				new_id = cell_dict[taxa] + "_" + record.id
+			
+				new_meta = record.id.split('_')
+				x = new_meta[3]
+				zero = new_meta[4]
+				contig = "Ct" +new_meta[6]
+				length = 'L' +new_meta[7].strip('Len')
+				og = ('_').join(new_meta[-3:])
+
+				if "Cov" in record.id:
+					cov = 'Cv'+new_meta[8].strip('Cov')
+				else:
+					cov = 'CvNA'
+
+
+
+				new_id = f'{cell_dict[taxa]}_{x}_{zero}_{contig}_{length}_{cov}_{og}'
 				new_seq = record.seq
 				new_rec.update({new_id : new_seq})
 
