@@ -28,7 +28,7 @@ def cluster(percent_id):
 			outfile = f'{subclade}_{percent_id}_output.fasta'
 			print(outfile)
 
-			command  = f'cd-hit -i {in_dir}/{subclade} -o Clusters_{percent_id}/{outfile} -c 0.99'
+			command  = f'cd-hit -i {in_dir}/{subclade} -o Clusters_{percent_id}/{outfile} -d 0 -c 0.99'
 			
 			subprocess.run([command], shell=True)
 
