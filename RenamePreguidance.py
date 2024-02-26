@@ -7,7 +7,7 @@ from Bio import SeqIO
 from pathlib import Path
 
 
-input_fasta = "unaligned"
+input_fasta = "Guidance"
 Path(f'Renamed_{input_fasta}').mkdir(parents=True, exist_ok=True)#makes output folder
 
 
@@ -48,7 +48,23 @@ for file in os.listdir(input_fasta):
 				new_rec.update({new_id : new_seq})
 
 			else:
-				new_id = record.id
+
+				new_meta = record.id.split('_')
+				x = new_meta[3]
+				zero = new_meta[4]
+				contig = "Ct" +new_meta[6]
+				length = 'L' +new_meta[7].strip('Len')
+				og = ('_').join(new_meta[-3:])
+
+				if "Cov" in record.id:
+					cov = 'Cv'+new_meta[8].strip('Cov')
+				else:
+					cov = 'CvNA'
+
+
+
+				new_id = f'{taxa}_{x}_{zero}_{contig}_{length}_{cov}_{og}'
+
 				new_seq = record.seq
 				new_rec.update({new_id : new_seq})
 
