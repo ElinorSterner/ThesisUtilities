@@ -12,7 +12,6 @@ from Bio import SeqIO
 from pathlib import Path
 import subprocess
 
-params = ['0.99', '1.00']#enter the clustering parameters here
 
 
 
@@ -28,7 +27,7 @@ def cluster(percent_id):
 			outfile = f'{subclade}_{percent_id}_output.fasta'
 			print(outfile)
 
-			command  = f'cd-hit -i {in_dir}/{subclade} -o Clusters_{percent_id}/{outfile} -d 0 -c 0.99'
+			command  = f'cd-hit -i {in_dir}/{subclade} -o Clusters_{percent_id}/{outfile} -d 0 -c {percent_id}'
 			
 			subprocess.run([command], shell=True)
 
