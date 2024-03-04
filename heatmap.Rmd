@@ -1,0 +1,131 @@
+---
+title: "heatmap"
+author: "Elinor Sterner"
+date: "2024-02-23"
+output: html_document
+keep_md: yes
+---
+
+```{r}
+library(tidyverse)
+library(reshape2)
+
+og_tally <- read.csv("Subtrees_unaligned_meta_data.csv")
+
+cluster_tally <- read.csv('Clusters_0.99_meta_data.csv')
+```
+
+
+Heat map dimensions:
+X = life stages and uni- and multi-nucleate
+Y = OG and Cluster
+Z = proportion of cells
+
+
+Subset clusters and clades sheets
+```{r}
+
+cluster_tally <- subset(cluster_tally, select = c(OG, cluster, porp_of_jv_in_cluster, porp_of_ad_in_cluster, porp_of_sz_in_cluster, porp_of_mu_in_cluster, porp_of_un_in_cluster, porp_of_nd_in_cluster))
+
+
+og_tally <- subset(og_tally, select = c(OG, porp_of_jv_in_cluster, porp_of_ad_in_cluster, porp_of_sz_in_cluster, porp_of_mu_in_cluster, porp_of_un_in_cluster, porp_of_nd_in_cluster))
+```
+
+rename clusters and clades sheets
+```{r}
+renamed_cluster_tally <- cluster_tally %>% 
+  rename(
+    Juveniles = porp_of_jv_in_cluster,
+    Adults = porp_of_ad_in_cluster,
+    Schizonts = porp_of_sz_in_cluster,
+    Multi = porp_of_mu_in_cluster,
+    Uni = porp_of_un_in_cluster,
+    NoNucData = porp_of_nd_in_cluster
+    )
+
+renamed_og_tally <- og_tally %>% 
+  rename(
+    Juveniles = porp_of_jv_in_cluster,
+    Adults = porp_of_ad_in_cluster,
+    Schizonts = porp_of_sz_in_cluster,
+    Multi = porp_of_mu_in_cluster,
+    Uni = porp_of_un_in_cluster,
+    NoNucData = porp_of_nd_in_cluster
+    )
+
+
+```
+
+Merge OG and cluster columns into one
+  OG sheet skips this step
+```{r}
+renamed_cluster_tally <- renamed_cluster_tally|>
+  mutate(OG_cluster = paste(OG, cluster, sep = '_'))
+
+```
+
+
+Flip to long format for heatmap
+```{r}
+long_cluster_tally <- pivot_longer(renamed_cluster_tally, 
+                                cols = c(Juveniles, Adults, Schizonts, Multi, Uni, NoNucData),
+                                names_to = "lifestage")
+
+long_og_tally <- pivot_longer(renamed_og_tally, 
+                                cols = c(Juveniles, Adults, Schizonts, Multi, Uni, NoNucData),
+                                names_to = "lifestage")
+
+```
+
+
+Heat map by *cluster*
+  
+  Change the name of the output and the gradient breaks
+```{r dev = c("png", "jpg")}
+
+clusters <- ggplot(long_cluster_tally, aes(x = lifestage, y = OG_cluster, fill= value)) + 
+  geom_tile() +
+  theme(text = element_text(size=6)) +#need to adjust text size depending on n of rows
+  scale_x_discrete(limits = c('Juveniles', 'Adults', 'Schizonts', 'Multi', 'Uni', 'NoNucData')) +
+  ylab("Clustered Grabbed Clades") +
+  scale_fill_gradient2(low = "white", high = "deepskyblue4", 
+                       midpoint = 0.0, 
+                       breaks = seq(0, 1.1, 0.1), # adjust the breaks for the maximum proportion
+                       limits = c(0, 1.1))# adjust the breaks for the maximum proportion
+
+
+clusters
+
+pdf('diff_20_clusters.pdf', width = 4 , height = 8) ## Change name and dimensions here
+
+clusters
+
+dev.off()# This gives an error if run alone, run the whole block
+
+
+```
+
+Heatmap by grabbed clade (by OG in your output)
+
+  use the output sheet from countGeneFamily.py
+  
+```{r}
+OGs_heat <- ggplot(long_og_tally, aes(x = lifestage, y = OG, fill= value)) + 
+  geom_tile()+
+   theme(text = element_text(size=8)) +
+  scale_x_discrete(limits = c('Juveniles', 'Adults', 'Schizonts', 'Multi', 'Uni', 'NoNucData')) +
+  ylab("Grabbed Clades") +
+  scale_fill_gradient2(low = "white", high = "deepskyblue4", 
+                       midpoint = 0.0, 
+                       breaks = seq(0, 2.6, 0.1), #adjust breaks
+                       limits = c(0, 2.6))#adjust breaks
+
+OGs_heat
+
+pdf('diff_20_OGs.pdf', width = 4 , height = 7) #change name
+
+OGs_heat
+
+dev.off()
+
+```
