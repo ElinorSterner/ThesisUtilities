@@ -12,6 +12,7 @@ def TallyOGs():
 
 	all_clade_data = []
 	all_coverages = []
+	all_data = []
 	
 	for file in os.listdir(indir):
 
@@ -81,13 +82,18 @@ def TallyOGs():
 		all_clade_data.append(to_write_per_tree)
 
 
-		coverage_per_tree = f'{tree_code}, , {avg_cov_jv}, {avg_cov_ad}, {avg_cov_sz}, ,{avg_cov_multi}, {avg_cov_uni}, {avg_cov_nd}, , {jv_coverage}, {ad_coverage}, {sz_coverage}, {multi_coverage}, {uni_coverage}, {nd_coverage}'
+		coverage_per_tree = f'{tree_code}, , {avg_cov_jv}, {avg_cov_ad}, {avg_cov_sz}, ,{avg_cov_multi}, {avg_cov_uni}, {avg_cov_nd}'
 		all_coverages.append(coverage_per_tree)
 
 
+		prop_cov_per_tree = f'{tree_code}, , {porp_of_jv_in_cluster}, {porp_of_ad_in_cluster}, {porp_of_sz_in_cluster}, {porp_of_mu_in_cluster}, {porp_of_un_in_cluster}, {porp_of_nd_in_cluster}, ,{avg_cov_jv}, {avg_cov_ad}, {avg_cov_sz}, {avg_cov_multi}, {avg_cov_uni}, {avg_cov_nd}'
+		all_data.append(prop_cov_per_tree)
 
-	#write_out_props(all_clade_data)
+
+
+	write_out_props(all_clade_data)
 	write_out_covs(all_coverages)
+	write_out_all(all_data)
 
 def write_out_props(all_clade_data):
 
@@ -106,10 +112,22 @@ def write_out_covs(all_coverages):
 
 	with open(f"{indir}_coverages.csv", 'w') as o:
 		
-		header = ("OG, , avg_cov_jv, avg_cov_ad, avg_cov_sz, ,avg_cov_multi, avg_cov_uni, avg_cov_nd, , jv_coverage, ad_coverage, sz_coverage, multi_coverage, uni_coverage, nd_coverage\n")
+		header = ("OG, , avg_cov_jv, avg_cov_ad, avg_cov_sz, ,avg_cov_multi, avg_cov_uni, avg_cov_nd\n")
 		o.write(header)
 
 		for tree in all_coverages:
+			o.write(f'{tree}\n')
+
+
+def write_out_all(all_data):
+
+	with open(f"{indir}_prop_coverages.csv", 'w') as o:
+		
+		header = ('OG, , porp_of_jv_in_cluster, porp_of_ad_in_cluster, porp_of_sz_in_cluster, porp_of_mu_in_cluster, porp_of_un_in_cluster, porp_of_nd_in_cluster, ,avg_cov_jv, avg_cov_ad, avg_cov_sz, avg_cov_multi, avg_cov_uni, avg_cov_nd\n')
+
+		o.write(header)
+
+		for tree in all_data:
 			o.write(f'{tree}\n')
 
 
