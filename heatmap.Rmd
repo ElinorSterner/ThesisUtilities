@@ -9,6 +9,7 @@ keep_md: yes
 ```{r}
 library(tidyverse)
 library(reshape2)
+setwd("/Users/elinorsterner/Documents/katzlab/allo/diff/making_heatmaps/")
 
 og_tally <- read.csv("Subtrees_unaligned_meta_data.csv")
 
@@ -88,15 +89,16 @@ clusters <- ggplot(long_cluster_tally, aes(x = lifestage, y = OG_cluster, fill= 
   theme(text = element_text(size=6)) +#need to adjust text size depending on n of rows
   scale_x_discrete(limits = c('Juveniles', 'Adults', 'Schizonts', 'Multi', 'Uni', 'NoNucData')) +
   ylab("Clustered Grabbed Clades") +
-  scale_fill_gradient2(low = "white", high = "deepskyblue4", 
-                       midpoint = 0.0, 
-                       breaks = seq(0, 1.1, 0.1), # adjust the breaks for the maximum proportion
-                       limits = c(0, 1.1))# adjust the breaks for the maximum proportion
+  scale_fill_stepsn(n.breaks = 5, colours = viridis::magma(5))
+  # scale_fill_gradient2(low = "white", high = "deepskyblue4",
+  #                      midpoint = 0.0,
+  #                      breaks = seq(0, 1, 0.25), # adjust the breaks for the maximum proportion
+  #                      limits = c(0, 1))# adjust the breaks for the maximum proportion
 
 
 clusters
 
-pdf('diff_20_clusters.pdf', width = 4 , height = 8) ## Change name and dimensions here
+pdf('diff_clusters.pdf', width = 4 , height = 8) ## Change name and dimensions here
 
 clusters
 
@@ -115,14 +117,15 @@ OGs_heat <- ggplot(long_og_tally, aes(x = lifestage, y = OG, fill= value)) +
    theme(text = element_text(size=8)) +
   scale_x_discrete(limits = c('Juveniles', 'Adults', 'Schizonts', 'Multi', 'Uni', 'NoNucData')) +
   ylab("Grabbed Clades") +
-  scale_fill_gradient2(low = "white", high = "deepskyblue4", 
-                       midpoint = 0.0, 
-                       breaks = seq(0, 2.6, 0.1), #adjust breaks
-                       limits = c(0, 2.6))#adjust breaks
+  scale_fill_stepsn(n.breaks = 5, colours = viridis::magma(5))
+  # scale_fill_gradient2(low = "white", high = "deepskyblue4",
+  #                      midpoint = 0.0,
+  #                      breaks = seq(0, 1.2, 0.25), #adjust breaks
+  #                      limits = c(0, 1.2))#adjust breaks
 
 OGs_heat
 
-pdf('diff_20_OGs.pdf', width = 4 , height = 7) #change name
+pdf('diff_clades.pdf', width = 4 , height = 4) #change name
 
 OGs_heat
 
