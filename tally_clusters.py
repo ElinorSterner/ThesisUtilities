@@ -1,3 +1,7 @@
+# Written by Elinor Spring 24 to tally cells by lifestage and nuclear type (wirtten into fake ten digit codes)
+# takes in .clstr files, tallies the number of cells up!
+# ASK me a q! : esterner27@gmail.com
+
 import os, itertools, re
 
 
@@ -43,37 +47,43 @@ all_clade_data = []#initiate list for data to write out to csv
 for clade in all_clades:# for each clstr file in the directory
 	for cluster, items in clade.items():
 
+		#print(cluster)
+
+
 		cluster_id = cluster[1:10] # get the name of the cluster from the dictionary key 
 
+		seen = set() # initiate empty set for the seen cells to be added to for each cluster
 		#initiate counts for all the cell types for each cluster that we parse through
 		jv_count, ad_count, sz_count = 0, 0, 0
 		multi_count, uni_count, no_data_count = 0, 0, 0
 
 		for item in items:#for sequence found in each cluster (this is parsing through a list)
-		#	cluster_id = item[1:10] # cluster name is the first thing in the list I think this line is redundant with the one above
 
-			
 			item_list = item.replace('... ', '_').split(',') # break apart the item (a string), which contains the whole line of the cluster file. it has "..." and spaces so its awkward to work with
-
 			if len(item_list) > 2:#if there are sequences in the line (the first line of each list is len = 1 because its ONLY the cluster id)
 				
-				cell = item_list[2][2:12]
+				cell = item_list[2][2:12]# ten digit code
+				if cell not in seen:
+					seen.add(cell)# add cell to "seen" now that it has been counted
 
-				#tally lifestages
-				if 'jv' in cell:
-					jv_count += 1
-				if 'ad' in cell:
-					ad_count += 1
-				if "sz" in cell:
-					sz_count += 1
+					#add cell to lifestage tallies if it has not been counted yet 
+					if 'jv' in cell:
+						jv_count += 1
+					if 'ad' in cell:
+						ad_count += 1
+					if "sz" in cell:
+						sz_count += 1
 
-				#tally nuclear types
-				if 'Mu' in cell:
-					multi_count += 1
-				if 'Un' in cell:
-					uni_count += 1
-				if 'Nd' in cell:
-					no_data_count += 1
+					# for the nucleus counts, if it is NOT a schizont, do not count it (since there are so few schizonts with nuclear data)
+					if "sz" not in cell:
+
+						#tally nuclear types
+						if 'Mu' in cell:
+							multi_count += 1
+						if 'Un' in cell:
+							uni_count += 1
+						if 'Nd' in cell:
+							no_data_count += 1
 
 				#get the og and clade number (from clade grabbing)
 				og = item_list[2].split('+')[-1]
@@ -81,14 +91,16 @@ for clade in all_clades:# for each clstr file in the directory
 			else:
 				cell = " "
 				og = " "
-		
-		porp_of_jv_in_cluster = str(round(jv_count/13, 2))
-		porp_of_ad_in_cluster = str(round(ad_count/12, 2))
-		porp_of_sz_in_cluster = str(round(sz_count/9, 2))
 
-		porp_of_mu_in_cluster = str(round(multi_count/8, 2))
-		porp_of_un_in_cluster = str(round(uni_count/6, 2))
-		porp_of_nd_in_cluster = str(round(no_data_count/20, 2))
+		# proportions of each lifestage counting ALL cells, round off at 2
+		porp_of_jv_in_cluster = str(round(jv_count/18, 2))
+		porp_of_ad_in_cluster = str(round(ad_count/18, 2))
+		porp_of_sz_in_cluster = str(round(sz_count/10, 2))
+
+		# proportions of the totals in adults and juveniles, round off at 2
+		porp_of_mu_in_cluster = str(round(multi_count/10, 2))
+		porp_of_un_in_cluster = str(round(uni_count/13, 2))
+		porp_of_nd_in_cluster = str(round(no_data_count/13, 2))
 
 
 
@@ -106,7 +118,7 @@ with open(f"{input_dir}_meta_data.csv", 'w') as o:
 	o.write(header)
 
 	for cluster in all_clade_data:
-		print(cluster)
+		#print(cluster)
 		o.write(f'{cluster}\n')
 
 
