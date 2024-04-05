@@ -1,14 +1,18 @@
-#Written Feb 2024
-#input: Subtrees unaligned
+#Written Feb 2024, Updated April 2024
+#input: Subtrees unaligned (post_guidance files, basically) but specifically the postguidance from clade grabbing
+# Tallies up the proportions of each life stage and nuclear type of allogromia. Also gives a median coverage for each life stage in each clade.
+# Output is 3 csv files, one of the proportions, one of the coverage, and one of coverage and proportions
+# note: does not count schizonts in the multi and uni counts because we had so few in the study
+# this does the same as tally_clusters.py, but for whole clades!
 
 import os
 from Bio import SeqIO
 import statistics
 
 
-	
+# change me if needed
 indir = "Subtrees_unaligned_At_only"
-outlabel = "epi_clades"
+outlabel = "diff_clades"
 
 def TallyOGs():
 
