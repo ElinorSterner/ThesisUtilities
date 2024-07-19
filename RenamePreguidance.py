@@ -7,7 +7,7 @@ from Bio import SeqIO
 from pathlib import Path
 
 
-input_fasta = "Guidance"
+input_fasta = "r2g_from_AD"
 Path(f'Renamed_{input_fasta}').mkdir(parents=True, exist_ok=True)#makes output folder
 
 
@@ -68,7 +68,10 @@ for file in os.listdir(input_fasta):
 				new_seq = record.seq
 				new_rec.update({new_id : new_seq})
 
-	outpath = f"Renamed_{input_fasta}/{file}"
+	# renaming the file name too
+	new_file = f"{new_id.split('_')[0]}_{'_'.join(file.split('_')[2:])}"
+	outpath = f"Renamed_{input_fasta}/{new_file}"
+	#print(f"{new_id.split('_')[0]}_{'_'.join(file.split('_')[2:])}") 
 
 	with open(outpath, 'w') as o:
 		for idd, seq in new_rec.items():
