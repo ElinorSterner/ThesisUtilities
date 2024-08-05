@@ -1,13 +1,14 @@
 
 #Written by Elinor 1/29/24 to rename ready to go files to rename them to include lifestage and nuclear type. Input raw group of ready to go files and file with information about each cell
 # Should be a CSV file and the indicators need to be single characters.
+# Updated summer 2024
 
 import os
 from Bio import SeqIO
 from pathlib import Path
 
 
-input_fasta = "r2g_from_AD"
+input_fasta = "output"
 Path(f'Renamed_{input_fasta}').mkdir(parents=True, exist_ok=True)#makes output folder
 
 
@@ -69,7 +70,7 @@ for file in os.listdir(input_fasta):
 				new_rec.update({new_id : new_seq})
 
 	# renaming the file name too
-	new_file = f"{new_id.split('_')[0]}_{'_'.join(file.split('_')[2:])}"
+	new_file = f"{'_'.join(new_id.split('_')[0:3])}_{'_'.join(file.split('_')[3:])}"
 	outpath = f"Renamed_{input_fasta}/{new_file}"
 	#print(f"{new_id.split('_')[0]}_{'_'.join(file.split('_')[2:])}") 
 
